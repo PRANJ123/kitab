@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const path = require('path');
 const cors = require("cors");
 
 const mongoose = require("mongoose");
@@ -26,10 +27,16 @@ app.use("/api/admin", adminRoutes)
 
 async function main() {
   await mongoose.connect(process.env.DB_URL);
-  app.use("/", (req, res) => {
-    res.send("Book Store Server is running!");
-  });
+  // app.use("/", (req, res) => {
+  //   res.send("Book Store Server is running!");
+  // });
 }
+
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+});
 
 main().then(() => console.log("Mongodb connect successfully!")).catch(err => console.log(err));
 
